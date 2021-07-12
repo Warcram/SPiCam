@@ -1,0 +1,17 @@
+{
+    "app_name": "SPiCam",
+    "verbose": true,
+    "show_video": true,
+    "room": "office",
+	"min_upload_seconds": 3.0,
+	"min_motion_frames": 3,
+	"warmup_secs": 2.5,
+	"delta_thresh": 5,
+	"resolution": [1280, 960],
+	"fps": 30,
+    "min_area": 5000,
+    "save_path": "/home/pi/SPiCam/images",
+    "dbx_access_token": "xhTMWixxxtAAAAAAAAAAAbu8UJk-GGSqh3Mtp8O6J26pri79j_HKGf486-68YvW0",
+    "dbx_enabled": true,
+    "recording_length": 20
+}
