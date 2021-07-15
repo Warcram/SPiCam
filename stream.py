@@ -23,8 +23,9 @@ class SPiCamera(object):
         return jpeg.tobytes()
 
 
+
 app = Flask(__name__)
-cam = SPiCamera()
+
 
 @app.route('/')
 def index():
@@ -39,6 +40,7 @@ def gen(camera):
 
 @app.route('/video_feed')
 def video_feed():
+    cam = SPiCamera()
     return Response(gen(cam),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
