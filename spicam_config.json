@@ -13,5 +13,8 @@
     "save_path": "/home/pi/SPiCam/images",
     "dbx_access_token": "xhTMWixxxtAAAAAAAAAAAbu8UJk-GGSqh3Mtp8O6J26pri79j_HKGf486-68YvW0",
     "dbx_enabled": true,
-    "recording_length": 20
+    "recording_length": 20,
+    "stream": true,
+    "flip":true,
+    "motiondetection":false
 }

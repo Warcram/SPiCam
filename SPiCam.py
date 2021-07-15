@@ -1,6 +1,7 @@
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 from warcram_utils import utils
+import stream
 import argparse
 import warnings
 import datetime
@@ -17,6 +18,8 @@ import os
 import numpy as np
 
 
+
+
 def sw_print(msg, err_level, config):
     utils.print_switch(msg, config["app_name"], err_level, config["verbose"])
 
@@ -25,6 +28,8 @@ def sanity_check():
     argParser.add_argument("-c","--conf", required=True, help="Path to json configuration file")
     argParser.add_argument("-f","--fps", required=False, help="Overwrite the video capture framerate")
     argParser.add_argument("-v","--verbose",required=False, help="Enable logging in the console")
+    argParser.add_argument("-s","--stream",required=False, help="Enable streaming mode - relevant config must be present in json config file.")
+    argParser.add_argument("-md","--motiondetection", required=False, help="Force motion detection mode")
     args = vars(argParser.parse_args())
     conf = json.load(open(args["conf"]))
     
@@ -32,6 +37,10 @@ def sanity_check():
         conf["fps"] = args["fps"]
     if args["verbose"] is not None:
         conf["verbose"] = args["verbose"]
+    if args["stream"] is not None:
+        conf["stream"] = args["stream"]
+    if args["motiondetection"] is not None:
+        conf["motiondetection"] = args["motiondetection"]
     return conf
 
 
@@ -130,7 +139,8 @@ def motion_detection_loop(config, cam, client):
                     motion_count = 0
         else:
             motion_count = 0
-        
+
+    
 
 def main():
     config = sanity_check()
@@ -142,15 +152,18 @@ def main():
             sw_print("Dropbox client connected","INFO",config)
         except Exception as e:
             sw_print(f"Dropbox client failed to connect with error {e}", "ERROR", config)
-    with PiCamera() as cam:
-        reso = tuple(config["resolution"])
-        cam.resolution = reso
-        cam.framerate = config["fps"]
-        try:
-            motion_detection_loop(config, cam, client)
-        except KeyboardInterrupt as e:
-            sw_print("Exiting application.", "ERROR", config)
-            exit(0)
+    if config["stream"] and not config["motiondetection"]:
+        stream.start_flask_server()
+    else:
+        with PiCamera() as cam:
+            reso = tuple(config["resolution"])
+            cam.resolution = reso
+            cam.framerate = config["fps"]
+            try:
+                motion_detection_loop(config, cam, client)
+            except KeyboardInterrupt as e:
+                sw_print("Exiting application.", "ERROR", config)
+                exit(0)
 
 if __name__ == "__main__":
     main()
